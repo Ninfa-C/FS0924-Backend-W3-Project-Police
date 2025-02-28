@@ -1,0 +1,51 @@
+﻿@model ReportListModel
+
+@{
+	ViewData["Title"] = "IPD- Report Record";
+}
+
+<h1>Polizia - Registro dei verbali </h1>
+
+@if (Model.VerbaliList != null && Model.VerbaliList.Count>0) 
+{
+    <table class="table table-striped table-bordered table-hover table-striped ">
+        <thead class="thead-dark">
+            <tr>
+                <th>N° Verbale</th>
+                <th>Data</th>
+                <th>Ora</th>
+                <th>Nome</th>
+                <th>Cognome</th>
+                <th>Cod. Fiscale</th>
+                <th>Città</th>
+                <th>N° Violazioni</th>
+                <th>Totale Importo</th>
+                <th>Modifica</th>
+                <th>Cancella</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model.VerbaliList)
+            {
+                <tr class="text-center">
+                    <td>@p.IDVerbale</td>
+                    <td>@p.Data</td>
+                    <td>@p.Ora</td>
+                    <td>@p.nome</td>
+                    <td>@p.cognome</td>
+                    <td>@p.CF</td>
+                    <td>@p.city</td>
+                    <td>@p.NumeroViolazioni</td>
+                    <td>€ @p.Totale</td>
+
+                    <td>
+                        <a class="nav-link" asp-controller="Product" asp-action="Edit" asp-route-id="@p.IDVerbale"><i class="bi bi-pencil-square"></i></a>
+                    </td >
+                    <td>
+                        <a class="nav-link" asp-controller="Product" asp-action="Delete" asp-route-id="@p.IDVerbale"><i class="bi bi-pencil-square"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
