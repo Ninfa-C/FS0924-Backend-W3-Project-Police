@@ -20,3 +20,10 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+
+fieldset {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+}
