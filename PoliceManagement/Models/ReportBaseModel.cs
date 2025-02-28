@@ -3,6 +3,8 @@
     public class ReportBaseModel
     {
         public int IDVerbale { get; set; }
+
+        public Guid ID_Anagrafica { get; set; }
         public DateTime DataVerbale { get; set; }
         public string Data => DataVerbale.ToShortDateString();
         public string Ora => DataVerbale.ToString("HH:mm");

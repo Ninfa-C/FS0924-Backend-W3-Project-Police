@@ -32,7 +32,7 @@ namespace PoliceManagement.Controllers
             await using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                string query = "SELECT V.id_verbale, V.dataViolazione, A.nome, A.cognome, A.cof_fisc, A.città, COUNT(V.id_violazione) as NumeroViolazioni, SUM (V.importo) as TotMulta FROM Anagrafica as A JOIN Verbali as V ON A.id_anagrafica = V.id_anagrafica GROUP BY V.id_verbale, V.dataViolazione, A.nome, A.cognome, A.cof_fisc, A.città;";
+                string query = "SELECT V.id_verbale, V.dataViolazione,A.id_anagrafica, A.nome, A.cognome, A.cof_fisc, A.città, COUNT(V.id_violazione) as NumeroViolazioni, SUM (V.importo) as TotMulta FROM Anagrafica as A JOIN Verbali as V ON A.id_anagrafica = V.id_anagrafica GROUP BY V.id_verbale, V.dataViolazione,A.id_anagrafica, A.nome, A.cognome, A.cof_fisc, A.città;";
                 await using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     await using (SqlDataReader reader = await command.ExecuteReaderAsync())
@@ -42,6 +42,7 @@ namespace PoliceManagement.Controllers
                             RecordList.VerbaliList.Add(
                                 new ReportBaseModel()
                                 {
+                                    ID_Anagrafica= reader.GetGuid(2),
                                     IDVerbale = reader.GetInt32(0),
                                     DataVerbale = reader.GetDateTime(1),
                                     nome = reader["nome"].ToString(),
@@ -154,6 +155,32 @@ namespace PoliceManagement.Controllers
             {
                 TempData["Error"] = $"Si è verificato un errore durante l'inserimento dei dati. Riprova più tardi. Errore: {ex.Message}";
                 return RedirectToAction("Add");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(Guid id, int n)
+        {
+            try
+            {
+                await using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync();
+                    var query = "DELETE V FROM Verbali AS V JOIN Anagrafica AS A ON A.id_anagrafica = V.id_anagrafica WHERE A.id_anagrafica = @id AND V.id_verbale= @n;";
+
+                    await using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@Id", id);
+                        command.Parameters.AddWithValue("@n", n);
+
+                        int righeInteressate = await command.ExecuteNonQueryAsync();
+                    }
+                }
+                return RedirectToAction("Index");
+            }catch (Exception ex)
+            {
+                TempData["Error"] = $"Si è verificato un errore durante l'inserimento dei dati. Riprova più tardi. Errore: {ex.Message}";
+                return RedirectToAction("Index");
             }
         }
     }
